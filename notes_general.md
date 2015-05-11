@@ -1,6 +1,72 @@
 ## General
 
+## Lightning rounds
+
+Useful libraries
+- BPL / Eben & Steven
+- bpl enrich -- github
+    - allows metadata formats to be enhanced
+- non-formatted lcsh statement --> transforms to dpla format
+- date standardizer -> date and date-node if it can't parse
+- roles -> name/part and LC label
+- geomash gem -> links to geonames plus other sources; includes commands to get text from the found links
+    - Geomash.parse( 'Fneuil Hall' ) or Geomash.parse( 'Hats', ('New Haven, CT') )
+- Blacklight Maps demo
+    - uses [leaflet](http://leafletjs.com) -- "An Open-Source JavaScript Library for Mobile-Friendly Interactive Maps"
+    - leaflet supports different options, but works with [geojson](http://geojson.org)
+    - solr 'subject_point_geospatial' but nicer, 'subject_geojson_facet_ssim', others
+    - geo-blacklight is more opinionated about the kind of metadata it expects, blacklight-maps more flexible
+    - tgn (getty) vs geonames
+    - someone mentioned 'built-works'  registry
+
+SDR - Security Design Review
+- Yale, Bob Rice -- Yalie IT
+- uses vendor tool which uses something plus nesus in background
+- found slow-response-time problem due to solr config
+- rails cookie persistance issue
+- they run it against development
+
+RDF for the disinclined
+- Amherst / Aaron Coburn
+- rdf (http, uris, semantic web) vs web tech (html, css, js)
+- rdf terminology
+    - skolemized identifiers
+    - entailment regimes & transitivity
+    - owl
+- web devs love json
+- json-ld?
+    - supported by fedora
+    - but not simple representation, will need code on top
+- fcr:transform -- the answer
+    - foo/fcr:transform/default: produces simple flat json-based representation
+    - id, type, title, creator, related -- nice flat key-value fields useful for solr, ajax
+    - uses [LDPath](http://marmotta.apache.org/ldpath/language.html)
+    - can store the ldpath config in fedora:system/fedora:transform/fedora:ldpath... -- [fedora duraspace wiki](https://wiki.duraspace.org/display/FEDORA4x/Indexing+Transformations) has info on how to do this
+- uses:
+    - replicating your repository in MongoDB
+    - indexing repo in solr
+- Q: in the config process -- is that essentially applying limited xpath statements to foxml?
+
+
+Migrating to fedora4
+- Yale / Eric James
+- current f3
+    - use [ladybird](http://ladybird.library.yale.edu) to manage their modeling layer, & create derivatives & metadata
+    - hydra publish table -- acts as a queue
+- f4
+    - pcdm
+    - ladybird metadata to other rdf stores
+    - work with catalogers to map fdid handles to predicates
+    - change fdid values from strings & ACID (authority vocab) to URIs where possible
+    - solr hydra/activefedora OR fcrep4 rest api for ingest & use camle route to transfor to a solr doc
+    - projections for large AV collections
+
+---
+
 ### PCDM
+
+- from discussions...
+    - pcdm defines hierarchical relationships -- doesn't say anything about _kind_ of object (image, pdf -- or 'page'). That info needed for display logic. Apparently there are pull-requests in to offer this capability.
 
 - Overview
     - flexible, extensible model that can underlie a wide array of repo and DAMS apps
