@@ -1,5 +1,11 @@
 ## General
 
+## Discussion
+
+- PCDM modeling example -- modeled oral-history
+
+- Sparql example
+
 ## Lightning rounds
 
 Useful libraries
@@ -91,15 +97,17 @@ Migrating to fedora4
 - ordering in pcdm...
     - pdcm pages in a book have no order
     - page gets associated with an ore:Proxy object -- and the ore:Proxy objects have an iana:next/previous attribute
-        - technically, don't _need_ the ore:Proxy linkage to the book, but it makes book-level sparkl queries simpler
+        - technically, don't _need_ the ore:Proxy linkage to the book, but it makes book-level sparql queries simpler
 
-- pcdm examples on [wiki](https://wiki.duraspace.org/display/FF/PCDM+Examples)
-    - talk examples not on wiki
+- pcdm examples
+    - [talk examples](https://wiki.duraspace.org/display/FF/PCDM+Mappings+-+Reference+Diagrams+for+Comment) (also see [pcdm examples](https://wiki.duraspace.org/display/FF/PCDM+Examples))
     - sufia collections -> sufiaWork -> GenericFile -> Content/Thumbnail/ExtractedText files
     - map -- no collection object, just a few objects each with files hanging off
         - vector object -> shape-files hanging off
         - scanned object
         - postcards -- like book with ordering only to front/back
+
+---
 
 ### Fedora 4 overview
 
