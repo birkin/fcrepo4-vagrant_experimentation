@@ -1,14 +1,19 @@
 ## General
 
-## Discussion
+
+### Discussion
 
 - PCDM modeling example -- modeled oral-history
 
 - Sparql example
+    - SELECT (FROM) WHERE LIMIT OFFSET OPTIONAL/UNION/etc
+    - ?s ?p ?o -- subject predicate object -- the question mark indicates parameter
 
-## Lightning rounds
+
+### Lightning rounds
 
 Useful libraries
+
 - BPL / Eben & Steven
 - bpl enrich -- github
     - allows metadata formats to be enhanced
@@ -69,6 +74,7 @@ Migrating to fedora4
 
 ---
 
+
 ### PCDM
 
 - from discussions...
@@ -109,6 +115,7 @@ Migrating to fedora4
 
 ---
 
+
 ### Fedora 4 overview
 
 - Community Participation
@@ -141,7 +148,8 @@ Migrating to fedora4
 
 ---
 
-## My questions
+
+### My questions
 
 - is the fuseki triple store an inherent part of fedora4? Or an add-on providing capability if desired.
     - B: add-on; said it's not part of the one-click install
