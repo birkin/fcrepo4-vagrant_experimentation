@@ -1,5 +1,6 @@
 ## General
 
+Notes for [NEFUG fedora-overview day](https://wiki.duraspace.org/display/Events/Northeast+Fedora+User+Group+Meeting%3A+11-12+May+2015)
 
 ### Discussion
 
