@@ -162,6 +162,48 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
         - f4: resources have an internal uuid, and have a repo path, which can be user-defined or generated via a path-minter
             - likely pattern -- have a name-service where the resource-path is mapped to the service id
 
+- mapping properties - descriptive
+    - pid
+        - f3 pid; f4 dcterms:identifier; eg 'prefix:123'
+    - state
+        - f3 state; f4 fedora3:objeState; eg 'active'
+    - label
+        - f3 label; f4 dcterms: title; eg 'some title'
+    - created date & modified date
+        - f3 createdDate; f4 :created -- but will be autocreated on migration, so may want to add a term in descriptive metadata
+    - owner id also
+
+- mapping properties - datasteams
+    - pattern below: property -- f3 term -- f4 term -- example
+    - dsid -- id -- dcterms:identifer -- prefix:123
+    - state -- state -- fedora3:objectState -- 'active' -- ben noted f4 doesn't act on this anymore -- it would be application-logic that would deal with this
+    - versionable
+    - label
+    - created/modified
+    - mimetype -- MIMETYPE -- fedora:mimeType -- image/jpg
+    - size -- SIZE -- premis:hasSize -- 50000
+
+- two tools
+    - fedora-based 'migration-utils'
+    - hydra based tool
+
+- migration-utils
+    - assumes foxml is complete representation of object
+    - foxml migration doesn't require the fedora3 repo software to be running
+    - considerations
+        - non-repo data (config, global xacml policies) would need special handling
+    - process
+        - process foxml documents
+        - migrate pids
+        - convert any inline xml to managed xml or rdf properties
+        - datastreams to binaries or rdf properties
+        - convert/map access controls to f4
+        - migrate versions
+
+- fedora-migrate hydra tool
+    - need working hydra app using fedora4
+    - all models defined in your hydra/f3 instance
+    - penn-state scholarsphere is the first in-production site using f4
 
 ---
 
