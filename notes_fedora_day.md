@@ -2,6 +2,7 @@
 
 Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/Northeast+Fedora+User+Group+Meeting%3A+11-12+May+2015)
 
+
 ### fedora overview
 
 - fedora acronym; existed as concept before software
@@ -29,7 +30,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
     - newer priorities: use of standards & APIs
 
 
-### Component stack
+#### Component stack
 
 - rest framework
     - fedora services
@@ -40,7 +41,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
                 - storage (objects & datastreams)
 
 
-### core features & standards
+#### core features & standards
 
 - main
     - crud-ldp
@@ -73,7 +74,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
     - whole thing only at moment (not partial)
     - will see how it plays out in terms of implementing partial backup/restore
 
-### Non core
+#### Non core
 
 - pluggable components -- common patterns
     - rest service, authorization engine, oai-pmh service
@@ -97,7 +98,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
         - both internal repository events and events from external sources can be recorded
 
 
-### LDP
+#### LDP
 
 - ldp & linked data
 
@@ -118,7 +119,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
     - pcdm
 
 
-### Performance & Scalability
+#### Performance & Scalability
 
 - fc3: one option
 - fc4: lots of options
@@ -142,7 +143,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
 - clustering tested successfully -- can use load-balancer
 
 
-### Migrating from v3 to v4
+#### Migrating from v3 to v4
 
 - difference, migration tools, possibilities for enhancing data
 
@@ -208,6 +209,118 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
 ---
 
 
+### hands-on fedora
+
+        $ vagrant up --no-provison
+        $ vagrant ssh
+
+- now i can go to `http://localhost:8080/fcrepo/` and port-forwarding gives me the ubuntu VM's fedora.
+
+- architecture: me -> ldp layer f4 -> messages go to camel ->A-> solr, and ->B->Triplestore/Fuseki(audit-service & sparql)
+
+- goal:
+    - objects
+        - cover
+            - files
+                - cover.jpg
+                - cover.tiff
+        - book (bonus)
+            - members
+                - coverProxy
+
+- f4 has notion of top-level object, here 'objects'
+
+- in above, files is a direct-container; members is an indirect-container
+
+- note to self -- this is already useful, because I've already begun thinking about f4 in terms of pcdm instead of the true ldp framework
+
+- final relationships (subject-predicate-object)
+    - cover pdcdm:hasFile cover.jpg
+    - cover pcdm:hasFile cover.tiff
+    - book pcdm:hasMember cover
+
+- resource being requested is almost always the subject
+
+- in this training we're naming the identifier -- initially 'objects', then a child 'cover' -- but programmatically we won't name the identifier, so fedora will auto-balance the tree structure.
+
+- added
+
+        PREFIX pcdm: <http://pcdm.org/models#>
+        INSERT { <> a pcdm:Object } WHERE { }
+
+    ...to the update-properties form field -- left in the other prefix default entries, and after clicking 'update', the pcdm addition now appears in two areas: 'fedora:mixinTypes' and 'rdf:type'
+
+- an ldp 'direct-container' must have 2 things: a membershipResource property and a hasMemberRelation property
+
+- an ldp 'indirect-container' has a proxyFor relationship
+    - <> ldp:insertedContentRelation ore:proxyFor
+
+- after adding cover.jpg, i'm at url: <http://localhost:8080/fcrepo/rest/objects/cover/files/cover.jpg/fcr:metadata>
+
+- if I go back to http://localhost:8080/fcrepo/rest/objects/cover, it knows about cover.jpg
+
+- another example of what we did on the wiki: 'https://wiki.duraspace.org/display/FEDORA4x/LDP-PCDM-F4+In+Action'
+
+- demo of running triplestore: 'http://localhost:3030/'
+    - sparql query
+
+            ?s ?p ?o where
+            { ?s ?p ?o }
+
+- solr, http://localhost:8080/solr/#/
+
+---
+
+
+### integration patterns with fedora
+
+Aaron Coburn -- Apache Camel
+
+- "asynchronous, distributed architecture is complex -- why do it?"
+
+- triplestore
+    - f3, mulgara 3store embedded
+    - f4, external 3store needed
+
+- software stack
+    - many simple and intermediate stacks are synchronous
+    - in fedora, web-ui would have to wait for fedora to update a 3store, and then solr -- and even more -- so waiting would take too long.
+        - further, failure chance increases with more components
+
+- messaging is a solution to allow asynchronous processing
+    - jargon: jms, soa, eip (enterprise integration patterns), esb (enterprise service bus), message oriented middleware, event driven architecture, PubSub, Message Broker, OSGi
+
+- camel, mule, there are a lot of these message-handlers / workflow-routers
+
+- simple to run a listener in any language, but once you have a lot, the _management_ of them (logging, starting them up, etc) takes a lot of work -- that's where Camel & its ilk comes in
+
+- camel uses a DSL
+
+- patterns in messaging:
+    - direct routing (from -> to)
+    - transformation ( from -> process -> to) -- transformations can be in Java or xml (jython?)
+    - filter ( from -> filter -> to )
+
+- camel can have a command to get a fedora message and multicast it to x number of routes
+
+- deploying camel
+    - can use a war file
+    - aaron likes [karaf](http://karaf.apache.org) a tiny jvm that lets you have lots of little services running independently -- as opposed to a war file that runs in the same container as other services like solr
+
+- Camel in Action, by Ibsen & Anstey
+
+- fedora activeMQ defaults to using a 'topic' instead of a 'queue'. If you care about ultimate reliability, use a queue.
+    - has nice monitoring tools using [hawtio](http://hawt.io)
+
+- aaron's documentation
+    - [camel-routes](https://acdc.amherst.edu/wiki/solr-routes)
+    - [karaf info](https://acdc.amherst.edu/wiki/karaf_runtime)
+
+- [fedora camel code](https://github.com/fcrepo4-labs/fcrepo-camel-toolbox)
+
+---
+
+
 ### my questions
 
 - restful api with native rdf response format
@@ -216,8 +329,10 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
 
 - no versioning currently? -- no, there is, it's just that the current syntax may be replaced with a standard versioning syntax.
 
-- audit service says tracks internal repo events plus external events -- what are some common external events?
+- audit service says tracks internal repo events plus external events -- what are some common external events? Oh, the external events are things triggered by a user, internal are things that fedora triggers itself internally
 
 - projection -- if a change is made to a projected resource, does fedora auditing/versioning get triggered? -- No
+
+- karaf seems really cool -- what other kinds of services can be run in it that traditionally use jetty or tomcat?
 
 ---
