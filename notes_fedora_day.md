@@ -97,6 +97,72 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
         - both internal repository events and events from external sources can be recorded
 
 
+### LDP
+
+- ldp & linked data
+
+- fc3 -- fc4:
+    - objects & datastreams -- resources
+    - objects -- containers
+    - datastreams -- binaries
+
+- containers & binaries are resources
+    - container resources can have both conainers and binaries as resources
+
+- properties
+    - resources have a number of properties, expressed as rdf triples
+    - name-value pairs are translated to rdf on rest-api responses
+
+- content-models modeled using properties and types
+    - fc3 - image-content model with many datastreams -- fc4 content-types
+    - pcdm
+
+
+### Performance & Scalability
+
+- fc3: one option
+- fc4: lots of options
+    - projection -- fedora can federate itself over an external filesystem
+        - objects never ingested, but fedora (read-only) operations happen
+
+- fcrepo-storage-policy
+    - a module that allows objects of a particular type to be stored in location A, whereas other objects are stored in location B
+    - can also be done with particular properties
+    - use case: large tiffs stored on amazon; derivitives stored locally
+        - bpl wants to store tiffs on slow storage and have jp2s and jpgs on faster access storage
+            - this is mostly available now -- but only via mimetypes
+
+- metrics
+    - terabyte via rest api
+    - 16 million objects via [projection](https://wiki.duraspace.org/display/FEDORA40/Filesystem+Federation)
+    - 10 million objects via rest api
+
+- transactions improve performance
+
+- clustering tested successfully -- can use load-balancer
+
+
+### Migrating from v3 to v4
+
+- difference, migration tools, possibilities for enhancing data
+
+- differences
+    - objects and resources
+        - f3, foxml objects; incline xml and xml datastreams
+        - f4, web resources (containers and binaries) -- no more inline xml - would convert it to binaries
+            - and repo is natively a hierarchy descending from a root resource
+                - due to modeshape -- get best performance from using a tree structure -- don't want to have a root node with 10,000 objects
+                - f4 autogenerates default balanced hierarchy for you (so default tree not meant to be meaningful; meaning via semantic properties) -- easiest just to use default tree hierarchy and not deal with that
+    - flesystem
+        - f3: objects and datastreams in pairtree
+        - f4: containers dir and binaries dir; containers in db; binaries in pairtree
+            - so not as human-readable
+    - pid vs path
+        - f3: pid; can't be altered
+        - f4: resources have an internal uuid, and have a repo path, which can be user-defined or generated via a path-minter
+            - likely pattern -- have a name-service where the resource-path is mapped to the service id
+
+
 ---
 
 
@@ -109,5 +175,7 @@ Notes for [NEFUG fedora-training day](https://wiki.duraspace.org/display/Events/
 - no versioning currently? -- no, there is, it's just that the current syntax may be replaced with a standard versioning syntax.
 
 - audit service says tracks internal repo events plus external events -- what are some common external events?
+
+- projection -- if a change is made to a projected resource, does fedora auditing/versioning get triggered? -- No
 
 ---
